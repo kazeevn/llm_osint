@@ -1,4 +1,4 @@
-from langchain.utilities import GoogleSerperAPIWrapper
+from langchain_community.utilities import GoogleSerperAPIWrapper
 from langchain.agents import Tool
 
 from llm_osint import cache_utils
