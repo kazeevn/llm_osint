@@ -33,9 +33,9 @@ def run_knowledge_agent(
     )
     knowledge_chunks = [initial_info_chunk]
     for _ in range(deep_dive_rounds):
-        round_knowlege = "\n\n".join(knowledge_chunks)
+        round_knowledge = "\n\n".join(knowledge_chunks)
         deep_dive_area_prompt = knowledge_agent_constants.DEEP_DIVE_LIST_PROMPT.format(
-            num_topics=deep_dive_topics, gather_prompt=gather_prompt, current_knowlege=round_knowlege, **prompt_args
+            num_topics=deep_dive_topics, gather_prompt=gather_prompt, current_knowledge=round_knowledge, **prompt_args
         )
         deep_dive_list = model.call_as_llm(deep_dive_area_prompt)
         try:
@@ -46,7 +46,7 @@ def run_knowledge_agent(
         for deep_dive_topic in deep_dive_areas:
             deep_dive_web_agent_prompt = knowledge_agent_constants.DEEP_DIVE_WEB_AGENT_PROMPT.format(
                 gather_prompt=gather_prompt,
-                current_knowlege=round_knowlege,
+                current_knowledge=round_knowledge,
                 deep_dive_topic=deep_dive_topic,
             )
             agent_chain = build_web_agent_func()
