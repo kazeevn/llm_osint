@@ -19,6 +19,7 @@ def build_web_agent(tools: List[Tool], memory: Optional[BaseChatMemory] = None, 
     if memory is None:
         memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     agent_kwargs.update(custom_agent_kwargs)
+    agent_kwargs["max_iterations"] = 2
     agent_chain = initialize_agent(
         tools,
         llm.get_default_llm(),
