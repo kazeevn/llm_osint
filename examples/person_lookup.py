@@ -20,7 +20,7 @@ For example
 """
 
 GATHER_PROMPT = """
-Learn as much as possible about {name} like their job, hobbies, common daily activites, friends, social media, interests, personality traits, preferences, and aspirations.
+Learn as much as possible about {name} like their job, hobbies, common daily activities, friends, social media, interests, personality traits, preferences, and aspirations.
 """
 
 ASK_PROMPT = """
@@ -41,14 +41,14 @@ def build_web_agent(name):
 
 @cache_utils.cache_func
 def fetch_internet_content(name) -> str:
-    knowlege_chunks = knowledge_agent.run_knowledge_agent(
+    knowledge_chunks = knowledge_agent.run_knowledge_agent(
         GATHER_PROMPT.format(name=name),
         build_web_agent_func=lambda: build_web_agent(name),
-        deep_dive_topics=10,
-        deep_dive_rounds=2,
+        deep_dive_topics=1,
+        deep_dive_rounds=1,
         name=name,
     )
-    return "\n\n".join(knowlege_chunks)
+    return "\n\n".join(knowledge_chunks)
 
 
 if __name__ == "__main__":
@@ -62,9 +62,10 @@ if __name__ == "__main__":
     fn = re.sub(r"[^\w]", "", args.name).lower() + ".txt"
 
     content = fetch_internet_content(args.name)
-    with open(fn, "w") as f:
+    with open(fn, "w", encoding="utf-8") as f:
         f.write(content)
 
     if args.ask:
         model = llm.get_default_llm()
         print(model.call_as_llm(ASK_PROMPT.format(name=args.name, internet_content=content, question=args.ask)))
+

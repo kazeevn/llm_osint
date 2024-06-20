@@ -8,7 +8,7 @@ def run_chain_with_retries(agent_chain: AgentExecutor, retries: int, **agent_run
     exception = None
     for _ in range(retries):
         try:
-            return agent_chain.run(**agent_run_kwargs)
+            return agent_chain.invoke(**agent_run_kwargs)
         except Exception as e:
             exception = e
     raise exception
