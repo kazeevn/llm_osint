@@ -1,6 +1,6 @@
 from typing import List, Optional
-import requests
 import os
+import requests
 from bs4 import BeautifulSoup
 
 from llm_osint import cache_utils
@@ -19,6 +19,7 @@ def scrape_text(url: str, retries: Optional[int] = 2) -> str:
                 "premium_proxy": "true",
                 "country_code": "us",
             },
+            timeout=30
         )
     except RuntimeError as e:
         if retries > 0:
