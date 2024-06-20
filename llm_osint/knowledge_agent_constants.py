@@ -12,14 +12,14 @@ Given these details about {name} and search and webpage reading abilities, creat
 Format the areas as a numbered list. Respond only with the list.
 
 Details:
-{current_knowlege}
+{current_knowledge}
 """
 
 DEEP_DIVE_WEB_AGENT_PROMPT = f"""
 {{gather_prompt}}
 
 Here's what you already know:
-{{current_knowlege}}
+{{current_knowledge}}
 
 {SUMMARY_TASK_PROMPT}
 

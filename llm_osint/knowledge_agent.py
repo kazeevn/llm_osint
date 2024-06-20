@@ -8,7 +8,7 @@ def run_chain_with_retries(agent_chain: AgentExecutor, retries: int, **agent_run
     exception = None
     for _ in range(retries):
         try:
-            return agent_chain.run(**agent_run_kwargs)
+            return agent_chain.invoke(**agent_run_kwargs)["output"]
         except Exception as e:
             exception = e
     raise exception
@@ -31,8 +31,6 @@ def run_knowledge_agent(
         retries,
         input=knowledge_agent_constants.INITIAL_WEB_AGENT_PROMPT.format(gather_prompt=gather_prompt),
     )
-    print("INITIAL INFO CHUNK")
-    print(initial_info_chunk)
     knowledge_chunks = [initial_info_chunk]
     for _ in range(deep_dive_rounds):
         round_knowledge = "\n\n".join(knowledge_chunks)
@@ -57,7 +55,5 @@ def run_knowledge_agent(
                 retries,
                 input=deep_dive_web_agent_prompt,
             )
-            print("CHHIIIIN")
-            print(info_chunk)
             knowledge_chunks.append(info_chunk)
     return knowledge_chunks
