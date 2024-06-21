@@ -50,10 +50,13 @@ def run_knowledge_agent(
                 deep_dive_topic=deep_dive_topic,
             )
             agent_chain = build_web_agent_func()
-            info_chunk = run_chain_with_retries(
-                agent_chain,
-                retries,
-                input=deep_dive_web_agent_prompt,
-            )
-            knowledge_chunks.append(info_chunk)
+            try:
+                info_chunk = run_chain_with_retries(
+                    agent_chain,
+                    retries,
+                    input=deep_dive_web_agent_prompt,
+                )
+                knowledge_chunks.append(info_chunk)
+            except Exception as e:
+                print("Agent failed", e)
     return knowledge_chunks
