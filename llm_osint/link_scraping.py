@@ -8,6 +8,16 @@ from llm_osint import cache_utils
 MAX_LINK_LEN = 120
 
 
+def scrape_text_naive(url: str, retries: Optional[int] = 2) -> str:
+    try:
+        resp = requests.get(url, timeout=30)
+    except RuntimeError as e:
+        if retries > 0:
+            return scrape_text_naive(url, retries=retries - 1)
+        raise e
+    return resp.text
+
+
 @cache_utils.cache_func
 def scrape_text(url: str, retries: Optional[int] = 2) -> str:
     try:
@@ -24,8 +34,7 @@ def scrape_text(url: str, retries: Optional[int] = 2) -> str:
     except RuntimeError as e:
         if retries > 0:
             return scrape_text(url, retries=retries - 1)
-        else:
-            raise e
+        raise e
     return resp.text
 
 
@@ -49,11 +58,11 @@ def _chunk_element(element, max_size: int) -> List[str]:
         return []
     if len(text) <= max_size:
         return [text]
-    else:
-        chunks = []
-        for child in element.findChildren(recursive=False):
-            chunks.extend(_chunk_element(child, max_size))
-        return chunks
+
+    chunks = []
+    for child in element.findChildren(recursive=False):
+        chunks.extend(_chunk_element(child, max_size))
+    return chunks
 
 
 def _merge_text_chunks(vals: List[str], max_size: int) -> List[str]:

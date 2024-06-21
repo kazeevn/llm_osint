@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from langchain.agents import Tool
 
@@ -35,7 +35,7 @@ For example
 """
 
 PARSE_REDUCE_PROMPT = """
-Given these chunks of details from {link} about {name}. Merge and duduplicate these into a single list.
+Given these chunks of details from {link} about {name}. Merge and deduplicate these into a single list.
 
 If some details disagree, pick the most common one. For links, include at most 10 of the most related links.
 
@@ -50,6 +50,7 @@ class ReadLinkWrapper:
         example_instructions: Optional[str] = PARSE_EXAMPLE_EXTRACTION,
         reduce_prompt: Optional[str] = PARSE_REDUCE_PROMPT,
         model: Optional[llm.LLMModel] = None,
+        scrapper_func: Optional[Callable] = scrape_text,
         **format_kwargs
     ):
         self.model = model
@@ -57,11 +58,12 @@ class ReadLinkWrapper:
         self.example_instructions = example_instructions
         self.reduce_prompt = reduce_prompt
         self.format_kwargs = format_kwargs
+        self.scrapper_func = scrapper_func
 
     def run(self, query: str) -> str:
         if query.endswith(".pdf"):
             return "Cannot read links that end in pdf"
-        chunks = chunk_and_strip_html(scrape_text(query), 4000)
+        chunks = chunk_and_strip_html(self.scrapper_func(query), 4000)
         format_args = {**self.format_kwargs, "link": query, "example_instructions": self.example_instructions}
         return map_reduce_texts(
             chunks,
@@ -77,5 +79,6 @@ def get_read_link_tool(**kwargs) -> Tool:
     return Tool(
         name="Read Link",
         func=read_link.run,
-        description="useful to read and extract the contents of any link. the input should be a valid url starting with http or https",
+        description="useful to read and extract the contents of any link. "
+        "the input should be a valid url starting with http or https",
     )
