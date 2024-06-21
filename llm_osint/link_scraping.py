@@ -3,12 +3,14 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+from scrapingant_client import ScrapingAntClient
+
 from llm_osint import cache_utils
 
 MAX_LINK_LEN = 120
 
 
-def scrape_text_naive(url: str, retries: Optional[int] = 2) -> str:
+def scrape_naive(url: str, retries: Optional[int] = 2) -> str:
     try:
         resp = requests.get(url, timeout=30)
     except RuntimeError as e:
@@ -19,7 +21,7 @@ def scrape_text_naive(url: str, retries: Optional[int] = 2) -> str:
 
 
 @cache_utils.cache_func
-def scrape_text(url: str, retries: Optional[int] = 2) -> str:
+def scrape_scrapingbee(url: str, retries: Optional[int] = 2) -> str:
     try:
         resp = requests.get(
             url="https://app.scrapingbee.com/api/v1/",
@@ -33,9 +35,21 @@ def scrape_text(url: str, retries: Optional[int] = 2) -> str:
         )
     except RuntimeError as e:
         if retries > 0:
-            return scrape_text(url, retries=retries - 1)
+            return scrape_scrapingbee(url, retries=retries - 1)
         raise e
     return resp.text
+
+
+@cache_utils.cache_func
+def scrape_scrapingant(url: str, retries: Optional[int] = 2) -> str:
+    client = ScrapingAntClient(token=os.environ["SCRAPINGANT_API_KEY"])
+    try:
+        result = client.general_request(url)
+    except RuntimeError as e:
+        if retries > 0:
+            return scrape_scrapingant(url, retries=retries - 1)
+        raise e
+    return result.content
 
 
 def _element_to_text(element) -> str:

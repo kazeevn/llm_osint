@@ -14,6 +14,7 @@ requests = "^2.32.3"
 bs4 = "^0.0.2"
 langchain-community = "^0.2.5"
 langchain-openai = "^0.1.8"
+scrapingant-client = "^2.0.1"
 
 
 [build-system]

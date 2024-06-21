@@ -1335,6 +1335,24 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "scrapingant-client"
+version = "2.0.1"
+description = "Official python client for the ScrapingAnt API."
+optional = false
+python-versions = "~=3.7"
+files = [
+    {file = "scrapingant-client-2.0.1.tar.gz", hash = "sha256:7c22bc25323cf49ec11e4f9cf447f584ddb4b98e4d4917b29d5929c04157598f"},
+    {file = "scrapingant_client-2.0.1-py3-none-any.whl", hash = "sha256:4a8a2f3f9e2751ddda2fd44b2d71f8e84f2575b71cd86095ebd4d5d16b296f25"},
+]
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[package.extras]
+async = ["httpx (<1)"]
+dev = ["flake8 (>=4,<5)", "pytest (>=7,<8)", "pytest-asyncio (>=0,<1)", "pytest-httpx (>=0,<1)", "responses (>=0,<1)"]
+
+[[package]]
 name = "sniffio"
 version = "1.3.1"
 description = "Sniff out which async library your code is running under"
@@ -1679,4 +1697,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "470fd38ee6337826015cc3343c13230470b213c34cff357c44b01bbdef19b32e"
+content-hash = "4f3bff9cf7283b7638158b2c4ed238649392d4bb8d3e75e6892126da1fe072b6"

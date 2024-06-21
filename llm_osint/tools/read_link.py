@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 from langchain.agents import Tool
 
-from llm_osint.link_scraping import scrape_text, chunk_and_strip_html
+from llm_osint.link_scraping import scrape_naive, chunk_and_strip_html
 from llm_osint.llm_map_reduce import map_reduce_texts
 from llm_osint import llm
 
@@ -50,7 +50,7 @@ class ReadLinkWrapper:
         example_instructions: Optional[str] = PARSE_EXAMPLE_EXTRACTION,
         reduce_prompt: Optional[str] = PARSE_REDUCE_PROMPT,
         model: Optional[llm.LLMModel] = None,
-        scrapper_func: Optional[Callable] = scrape_text,
+        scrapper_func: Optional[Callable] = scrape_naive,
         **format_kwargs
     ):
         self.model = model
