@@ -1,14 +1,19 @@
 from typing import List, Callable, Optional
-
+from langchain_core.messages import HumanMessage
 from langchain.agents.agent import AgentExecutor
 from llm_osint import knowledge_agent_constants, llm
+import logging
 
+logger = logging.getLogger(__name__)
 
 def run_chain_with_retries(agent_chain: AgentExecutor, retries: int, **agent_run_kwargs) -> str:
+    if len(agent_run_kwargs['input']) > 16000:
+        raise ValueError(f"Input too long\n{agent_run_kwargs['input'][:1000]}\n...\n{agent_run_kwargs['input'][-1000:]}")
     exception = None
     for _ in range(retries):
         try:
-            return agent_chain.invoke(**agent_run_kwargs)["output"]
+            output = agent_chain.invoke(agent_run_kwargs)
+            return output['output']
         except Exception as e:
             exception = e
     raise exception
@@ -32,12 +37,13 @@ def run_knowledge_agent(
         input=knowledge_agent_constants.INITIAL_WEB_AGENT_PROMPT.format(gather_prompt=gather_prompt),
     )
     knowledge_chunks = [initial_info_chunk]
+
     for _ in range(deep_dive_rounds):
         round_knowledge = "\n\n".join(knowledge_chunks)
         deep_dive_area_prompt = knowledge_agent_constants.DEEP_DIVE_LIST_PROMPT.format(
             num_topics=deep_dive_topics, gather_prompt=gather_prompt, current_knowledge=round_knowledge, **prompt_args
         )
-        deep_dive_list = model.call_as_llm(deep_dive_area_prompt)
+        deep_dive_list = model.invoke([HumanMessage(deep_dive_area_prompt)]).content
         try:
             deep_dive_areas = [v.split(". ", 1)[1] for v in deep_dive_list.strip().split("\n")]
         except IndexError:

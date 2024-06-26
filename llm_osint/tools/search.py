@@ -5,6 +5,11 @@ from llm_osint import cache_utils
 
 
 class GoogleSerperSearchWrapper(GoogleSerperAPIWrapper):
+    """
+    The wrapper does two things:
+    1. It caches the results of the search query.
+    2. It includes the links
+    """
     @cache_utils.cache_func
     def run(self, query: str) -> str:
         return super().run(query)
@@ -50,5 +55,5 @@ def get_search_tool(**kwargs) -> Tool:
     return Tool(
         name="Search Term",
         func=search.run,
-        description="useful for when you need to find information about general things, names, usernames, places, etc. the input should be a search term",
+        description="Useful for when you need to find information about general things, names, usernames, places, etc. The input should be a search term.",
     )

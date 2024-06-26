@@ -15,8 +15,10 @@ def scrape_naive(url: str, retries: Optional[int] = 2) -> str:
         resp = requests.get(url, timeout=30)
     except RuntimeError as e:
         if retries > 0:
-            return scrape_text_naive(url, retries=retries - 1)
+            return scrape_naive(url, retries=retries - 1)
         raise e
+    if resp.status_code != 200:
+        return (f"Failed to access {url}. Status code: {resp.status_code}")
     return resp.text
 
 

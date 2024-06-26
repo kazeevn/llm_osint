@@ -79,6 +79,6 @@ def get_read_link_tool(**kwargs) -> Tool:
     return Tool(
         name="Read Link",
         func=read_link.run,
-        description="useful to read and extract the contents of any link. "
-        "the input should be a valid url starting with http or https",
+        description="Useful to read and extract the contents of any link. "
+        "The input should be a valid url starting with http or https.",
     )

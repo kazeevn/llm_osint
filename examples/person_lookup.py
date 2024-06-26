@@ -3,6 +3,8 @@ from functools import partial
 import importlib
 import argparse
 from pathlib import Path
+import logging
+from langchain_core.messages import HumanMessage
 from llm_osint.tools.search import get_search_tool
 from llm_osint.tools.read_link import get_read_link_tool
 from llm_osint import knowledge_agent, web_agent, cache_utils, llm
@@ -60,8 +62,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("name", type=str)
     parser.add_argument("--ask", type=str)
+    parser.add_argument("--log-level", type=str, default=logging.WARNING)
     parser.add_argument("--scraper", type=str, default="scrape_text")
     args = parser.parse_args()
+    logging.basicConfig(level=args.log_level)
+
     scraper_func = getattr(importlib.import_module("llm_osint.link_scraping"), args.scraper)
 
     fn = re.sub(r"[^\w]", "", args.name).lower() + ".txt"
@@ -71,7 +76,7 @@ def main():
 
     if args.ask:
         model = llm.get_default_llm()
-        print(model.call_as_llm(ASK_PROMPT.format(name=args.name, internet_content=content, question=args.ask)))
+        print(model.invoke([HumanMessage(ASK_PROMPT.format(name=args.name, internet_content=content, question=args.ask))]).content)
 
 
 if __name__ == "__main__":
