@@ -6,10 +6,6 @@ _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI C
 
 <img width="990" alt="ApplicationFrameHost_UWJhAyEJDw" src="https://user-images.githubusercontent.com/6625384/232262373-bbf80996-e38a-4d4e-8be9-3e05277417f0.png">
 
-## Examples
-
-See the full code in [/examples](https://github.com/sshh12/llm_osint/tree/main/examples).
-
 ### Privacy
 
 This tool is spooky good at gathering information from publicly available sources. However, it is crucial to recognize the responsibility that comes with using such a powerful tool. When utilizing it to research individuals other than yourself, always be cognizant of each person's right to privacy. Remember that personal information uncovered through open-source intelligence remains personal and should be treated with respect and protection. Use this tool ethically and responsibly, ensuring that you do not infringe upon anyone's privacy or engage in malicious activities.
@@ -18,7 +14,7 @@ This tool is spooky good at gathering information from publicly available source
 
 The most obvious use for something like this is to have it "google" someone and then perform an action with this information. In these examples, I used it to research myself and took the first result. **No other additional information was given to the script beyond the command below**. For common names, disambiguation can be done like `John Smith (the Texas Musician)`.
 
-`$ python examples\person_lookup.py "Shrivu Shankar" --ask $QUESTION`
+`$ python person_lookup.py "Shrivu Shankar" --ask $QUESTION`
 
 <details>
 <summary>Write their top 3 most likely myers-briggs types with levels of confidence.</summary>
@@ -258,7 +254,7 @@ Happy coding (and chewing)! 😃
 
 ### Design
 
-I initally tried to do this completely end-to-end as the default langchain zero shot agent. Essentially I asked GPT "Given these tools, find information about XYZ then answer these questions". However, in practice this agent ran very "greedy" in that it would webscrape the bare minimum amount of information and return early with an answser. No amount of prompt tweaking seems to fix this so I decided to split the OSINT task into small "web agents" for specific information gathering orchestrated by a "knowledge agent".
+I initially tried to do this completely end-to-end as the default langchain zero shot agent. Essentially I asked GPT "Given these tools, find information about XYZ then answer these questions". However, in practice this agent ran very "greedy" in that it would webscrape the bare minimum amount of information and return early with an answer. No amount of prompt tweaking seems to fix this so I decided to split the OSINT task into small "web agents" for specific information gathering orchestrated by a "knowledge agent".
 
 The knowledge agent is given a "gather" prompt which guides it to simply accumulate as much information as possible. It first spawns an initial web agent which does a general search for the obvious information (e.g. googling a name) and reading first-degree webpages. The results of the initial web agent are then run through a prompt to find "deep dive" areas that it should look more into. For each of these deep dive areas, a new web agent is spawned to gather information. The results of these deep dive web agents are then concatenated and the process repeats for N deep dive rounds. The full knowledge base is then fed as context for a final question about the topic.
 
@@ -282,7 +278,7 @@ Note: Tools are only provided to the web agent.
 
 #### Search
 
-The web agent is given a "Search(search term)" tool to gather information about a specific term. This uses the serper API (i.e. google search API) to find relevent links. This is essentially the built-in langchain tool with a patch to also return the raw links found in the results.
+The web agent is given a "Search(search term)" tool to gather information about a specific term. This uses the serper API (i.e. google search API) to find relevant links. This is essentially the built-in langchain tool with a patch to also return the raw links found in the results.
 
 #### Read Link
 
@@ -290,12 +286,12 @@ Rather than having a "linkedin tool", a "twitter tool", etc. I want the web agen
 
 The MVP of this was to run a `requests.get()` and just dump the raw html back to the agent. This broke because:
 
-1. Pages like linkedin often block bot requests or require JS render. To resolve this, I switched to "scrapingbee" as pay-to-scrape service which can reliably bypass nearly any bot detection and perform JS rendering.
+1. Pages like LinkedIn often block bot requests or require JS render. To resolve this, I switched to "scrapingbee" as pay-to-scrape service which can reliably bypass nearly any bot detection and perform JS rendering.
 2. The HTML is just too much for the web agent too work with and eats away GPT-4 token costs. To resolve this I switched to the chunk+summarize method below.
 
 ##### Chunk + Summarize
 
-To reduce the token count of the responses, I split it into chunks based on a recursive split of the time tree. Starting with the root, if the current DOM element has < X tokens then I call it a chunk, if it has more then I continue to split it. For each chunk, the html is stripped to just text and run through GPT to summarize and extract content. The extraction prompt is aware of the context of the webscraping in an attempt to pull out only the most useful information. These extracted chunks are then fed back into GPT to summarize the data into a digestable format for the web agent to incorprate into it's information gathering. In the code, this is framework is referred to as an "LLM map reduce".
+To reduce the token count of the responses, I split it into chunks based on a recursive split of the time tree. Starting with the root, if the current DOM element has < X tokens then I call it a chunk, if it has more then I continue to split it. For each chunk, the html is stripped to just text and run through GPT to summarize and extract content. The extraction prompt is aware of the context of the webscraping in an attempt to pull out only the most useful information. These extracted chunks are then fed back into GPT to summarize the data into a digestible format for the web agent to incorporate into it's information gathering. In the code, this is framework is referred to as an "LLM map reduce".
 
 <img width="231" alt="chrome_VODSJ8f4U3" src="https://user-images.githubusercontent.com/6625384/232262181-2d904205-c9cd-44e7-b70a-f10e2c988bb7.png">
 
@@ -303,17 +299,16 @@ To reduce the token count of the responses, I split it into chunks based on a re
 
 The costs vary based on the amount of googlable information, the size of webpages, and the general curiosity of the LLM on certain topic.
 
-In experimation using GPT-4 as the primary driver of the knowledge and web agents and GPT-3.5 as backend of the webscraping tool, this costs ~$1/web agent task. If you did 2 rounds of 10 deep dive agents, it would come out to around $21. If given a generic enough gather prompt, the knowledge base can be re-used for additional questions making this mostly one-time cost per search topic.
+In experimentation using GPT-4 as the primary driver of the knowledge and web agents and GPT-3.5 as backend of the webscraping tool, this costs ~$1/web agent task. If you did 2 rounds of 10 deep dive agents, it would come out to around $21. If given a generic enough gather prompt, the knowledge base can be re-used for additional questions making this mostly one-time cost per search topic.
 
 ## Install
-
-1. pip install `git+https://github.com/sshh12/llm_osint`
-2. Environment Setup
+Environment Setup
 
 ```
 OPENAI_API_KEY=
 SERPER_API_KEY=
 SCRAPINGBEE_API_KEY=
+SCRAPINGANT_API_KEY=
 ```
 
 Note: Both serper and scraping bee provide free trial usage of the APIs that should be good enough to run this a few times.

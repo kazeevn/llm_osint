@@ -27,7 +27,6 @@ def build_web_agent(tools: List[Tool], memory: Optional[BaseChatMemory] = None) 
         ("system", system_prompt.template),
         ("human", "{input}\n\n{agent_scratchpad}")
     ])
-    #prompt = hub.pull("hwchase17/react")
     agent = create_react_agent(
         llm=llm.get_default_llm(),
         tools=tools,

@@ -1,11 +1,8 @@
 from typing import List, Optional, Union
+import asyncio
 from langchain_core.messages import HumanMessage
 from llm_osint import cache_utils, llm
-import asyncio
 
-#@cache_utils.cache_func
-#async def map_(prompt: str, text: str, model: llm.LLMModel) -> str:
-    #return await model.ainvoke([HumanMessage(prompt.format(text=text))])
 
 @cache_utils.cache_func
 def reduce_(prompt: str, texts: List[str], model: llm.LLMModel) -> str:
