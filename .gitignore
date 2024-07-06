@@ -130,6 +130,6 @@ dmypy.json
 env.bat
 script.py
 cache/*
-*.txt
+internet_content/*
 *.bat
 .vscode/*

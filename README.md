@@ -5,6 +5,25 @@ _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI C
 
 <img width="990" alt="ApplicationFrameHost_UWJhAyEJDw" src="https://user-images.githubusercontent.com/6625384/232262373-bbf80996-e38a-4d4e-8be9-3e05277417f0.png">
 
+## Getting Started
+### Install the packages
+Use either [poetry](https://python-poetry.org/) or `requirements.txt`
+### Environment Setup
+
+```
+OPENAI_API_KEY=
+SERPER_API_KEY=
+SCRAPINGBEE_API_KEY=
+SCRAPINGANT_API_KEY=
+```
+Note: [Serper](https://serper.dev/), [ScrapingBee](https://www.scrapingbee.com/) and [ScrapingAnt](https://scrapingant.com/) provide free trial usage of the APIs that should be good enough to run this a few times. If you plan on developing the code further, you may want to add LangSmith:
+```
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
+LANGCHAIN_API_KEY=
+LANGCHAIN_PROJECT="llm-osint"
+```
+
 ### Privacy
 
 This tool is spooky good at gathering information from publicly available sources. However, it is crucial to recognize the responsibility that comes with using such a powerful tool. When utilizing it to research individuals other than yourself, always be cognizant of each person's right to privacy. Remember that personal information uncovered through open-source intelligence remains personal and should be treated with respect and protection. Use this tool ethically and responsibly, ensuring that you do not infringe upon anyone's privacy or engage in malicious activities.
@@ -293,15 +312,3 @@ The MVP of this was to run a `requests.get()` and just dump the raw html back to
 To reduce the token count of the responses, we split it into chunks based on a recursive split of the time tree. Starting with the root, if the current DOM element has < X tokens then we call it a chunk, if it has more then we continue to split it. For each chunk, the HTML is stripped to just text and run through GPT to summarize and extract content. The extraction prompt is aware of the context of the webscraping in an attempt to pull out only the most useful information. These extracted chunks are then fed back into GPT to summarize the data into a digestible format for the web agent to incorporate into it's information gathering. In the code, this is framework is referred to as an "LLM map reduce".
 
 <img width="231" alt="chrome_VODSJ8f4U3" src="https://user-images.githubusercontent.com/6625384/232262181-2d904205-c9cd-44e7-b70a-f10e2c988bb7.png">
-
-## Install
-Environment Setup
-
-```
-OPENAI_API_KEY=
-SERPER_API_KEY=
-SCRAPINGBEE_API_KEY=
-SCRAPINGANT_API_KEY=
-```
-
-Note: Both Serper, ScrapingBee and ScrapingAnt provide free trial usage of the APIs that should be good enough to run this a few times.
