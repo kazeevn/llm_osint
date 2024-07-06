@@ -1,6 +1,5 @@
 # llm_osint
-
-> LLM OSINT is a proof-of-concept method of using LLMs to gather information from the internet and then perform a task with this information.
+### LLM OSINT is a proof-of-concept method of using LLMs to gather information from the internet and then perform a task with this information.
 
 _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI Could Revolutionize Email—for Hackers"_.
 
@@ -12,7 +11,7 @@ This tool is spooky good at gathering information from publicly available source
 
 ### Person Lookup
 
-The most obvious use for something like this is to have it "google" someone and then perform an action with this information. In these examples, I used it to research myself and took the first result. **No other additional information was given to the script beyond the command below**. For common names, disambiguation can be done like `John Smith (the Texas Musician)`.
+The most obvious use for something like this is to have it "google" someone and then perform an action with this information. In these examples, the author used it to research himself and took the first result. **No other additional information was given to the script beyond the command below**. For common names, disambiguation can be done like `John Smith (the Texas Musician)`.
 
 `$ python person_lookup.py "Shrivu Shankar" --ask $QUESTION`
 
@@ -254,7 +253,7 @@ Happy coding (and chewing)! 😃
 
 ### Design
 
-I initially tried to do this completely end-to-end as the default langchain zero shot agent. Essentially I asked GPT "Given these tools, find information about XYZ then answer these questions". However, in practice this agent ran very "greedy" in that it would webscrape the bare minimum amount of information and return early with an answer. No amount of prompt tweaking seems to fix this so I decided to split the OSINT task into small "web agents" for specific information gathering orchestrated by a "knowledge agent".
+We initially tried to do this completely end-to-end as the default langchain zero shot agent. Essentially we asked GPT "Given these tools, find information about XYZ then answer these questions". However, in practice this agent ran very "greedy" in that it would webscrape the bare minimum amount of information and return early with an answer. No amount of prompt tweaking seems to fix this so we decided to split the OSINT task into small "web agents" for specific information gathering orchestrated by a "knowledge agent".
 
 The knowledge agent is given a "gather" prompt which guides it to simply accumulate as much information as possible. It first spawns an initial web agent which does a general search for the obvious information (e.g. googling a name) and reading first-degree webpages. The results of the initial web agent are then run through a prompt to find "deep dive" areas that it should look more into. For each of these deep dive areas, a new web agent is spawned to gather information. The results of these deep dive web agents are then concatenated and the process repeats for N deep dive rounds. The full knowledge base is then fed as context for a final question about the topic.
 
@@ -282,7 +281,7 @@ The web agent is given a "Search(search term)" tool to gather information about 
 
 #### Read Link
 
-Rather than having a "linkedin tool", a "twitter tool", etc. I want the web agent to be able to easily scrape pages in a generic way. To achieve this I created a tool "ReadLink(link)" that allows the agent to read an arbitrary link.
+Rather than having a "LinedIn tool", a "Twitter tool", etc. we want the web agent to be able to easily scrape pages in a generic way. To achieve this we created a tool "ReadLink(link)" that allows the agent to read an arbitrary link.
 
 The MVP of this was to run a `requests.get()` and just dump the raw html back to the agent. This broke because:
 
@@ -291,15 +290,9 @@ The MVP of this was to run a `requests.get()` and just dump the raw html back to
 
 ##### Chunk + Summarize
 
-To reduce the token count of the responses, I split it into chunks based on a recursive split of the time tree. Starting with the root, if the current DOM element has < X tokens then I call it a chunk, if it has more then I continue to split it. For each chunk, the html is stripped to just text and run through GPT to summarize and extract content. The extraction prompt is aware of the context of the webscraping in an attempt to pull out only the most useful information. These extracted chunks are then fed back into GPT to summarize the data into a digestible format for the web agent to incorporate into it's information gathering. In the code, this is framework is referred to as an "LLM map reduce".
+To reduce the token count of the responses, we split it into chunks based on a recursive split of the time tree. Starting with the root, if the current DOM element has < X tokens then we call it a chunk, if it has more then we continue to split it. For each chunk, the HTML is stripped to just text and run through GPT to summarize and extract content. The extraction prompt is aware of the context of the webscraping in an attempt to pull out only the most useful information. These extracted chunks are then fed back into GPT to summarize the data into a digestible format for the web agent to incorporate into it's information gathering. In the code, this is framework is referred to as an "LLM map reduce".
 
 <img width="231" alt="chrome_VODSJ8f4U3" src="https://user-images.githubusercontent.com/6625384/232262181-2d904205-c9cd-44e7-b70a-f10e2c988bb7.png">
-
-### Costs
-
-The costs vary based on the amount of googlable information, the size of webpages, and the general curiosity of the LLM on certain topic.
-
-In experimentation using GPT-4 as the primary driver of the knowledge and web agents and GPT-3.5 as backend of the webscraping tool, this costs ~$1/web agent task. If you did 2 rounds of 10 deep dive agents, it would come out to around $21. If given a generic enough gather prompt, the knowledge base can be re-used for additional questions making this mostly one-time cost per search topic.
 
 ## Install
 Environment Setup
@@ -311,4 +304,4 @@ SCRAPINGBEE_API_KEY=
 SCRAPINGANT_API_KEY=
 ```
 
-Note: Both serper and scraping bee provide free trial usage of the APIs that should be good enough to run this a few times.
+Note: Both Serper, ScrapingBee and ScrapingAnt provide free trial usage of the APIs that should be good enough to run this a few times.
