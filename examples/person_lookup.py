@@ -51,8 +51,8 @@ def fetch_internet_content(name, scraper_func) -> str:
     knowledge_chunks = knowledge_agent.run_knowledge_agent(
         GATHER_PROMPT.format(name=name),
         build_web_agent_func=partial(build_web_agent, name=name, scraper_func=scraper_func),
-        deep_dive_topics=10,
-        deep_dive_rounds=2,
+        deep_dive_topics=1,
+        deep_dive_rounds=1,
         name=name,
     )
     return "\n\n".join(knowledge_chunks)
@@ -63,7 +63,8 @@ def main():
     parser.add_argument("name", type=str)
     parser.add_argument("--ask", type=str)
     parser.add_argument("--log-level", type=str, default=logging.WARNING)
-    parser.add_argument("--scraper", type=str, default="scrape_text")
+    parser.add_argument("--scraper", type=str, default="scrape_naive")
+    parser.add_argument("--gui", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=args.log_level)
 
