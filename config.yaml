@@ -1,0 +1,15 @@
+web_agent:
+  # By default, we run in extra-light mode. Change to 10 topics and 2 rounds when running for real.
+  deep_dive_topics: 1
+  deep_dive_rounds: 1
+  scraper: scrape_scrapingant
+  web_reader_llm: # Used to extract content from web pages
+    model_name: gpt-3.5-turbo
+    request_timeout: 120
+    max_retries: 10
+    temperature: 0.7
+llm: # Used for everything else
+  model_name: gpt-3.5-turbo
+  request_timeout: 120
+  max_retries: 10
+  temperature: 0.7

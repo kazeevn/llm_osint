@@ -1,34 +1,62 @@
-from typing import List, Optional, Any, Dict
 from pathlib import Path
-from langchain.agents import Tool
-from langchain.memory.chat_memory import BaseChatMemory
-from langchain.memory import ConversationBufferMemory
+from typing import Callable, List, Optional
+
+from langchain.agents import Tool, create_react_agent
 from langchain.agents.agent import AgentExecutor
-from langchain.agents import create_react_agent
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain import hub
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from llm_osint import llm
+from langchain.chat_models.base import BaseChatModel
+from langchain.memory import ConversationBufferMemory
+from langchain.memory.chat_memory import BaseChatMemory
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 
-from langchain_core.utils import print_text
-from langchain_core.agents import AgentAction, AgentFinish
-
-class PrettyPrinter(StdOutCallbackHandler):
-    def on_agent_action(
-        self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
-    ) -> Any:
-        """Run on agent action."""
-        print_text('\n' + action.log, color=color or self.color)
+from llm_osint.tools.read_link import get_read_link_tool
+from llm_osint.tools.search import get_search_tool
 
 
-def build_web_agent(tools: List[Tool], memory: Optional[BaseChatMemory] = None) -> AgentExecutor:    
-    system_prompt = PromptTemplate.from_file(Path(__file__).parent / "web_agent_prompt.txt")
+def build_web_agent(
+    name: str,
+    scraper_func: Callable,
+    llm: BaseChatModel,
+    web_reader_llm: BaseChatModel) -> AgentExecutor:
+    """
+    Build a web agent that searches the web for information about a person.
+    The agent has access to a web search tool and a web reader/scraper tool.
+    Args:
+        name: The name of the person.
+        scraper_func: The function that scrapes the web page.
+        scraper_prompt: The prompt for the scraper.
+        llm: The LLM model to use.
+        web_reader_llm: The web reader LLM model.
+    Returns:
+        The web agent.
+    """
+    tools = [get_search_tool(),
+             get_read_link_tool(
+                name=name, scrapper_func=scraper_func,
+                map_llm=web_reader_llm, reduce_llm=llm)]
+    return build_web_agent_from_tools(tools, llm)
+
+
+def build_web_agent_from_tools(
+    tools: List[Tool],
+    llm: BaseChatModel,
+    memory: Optional[BaseChatMemory] = None) -> AgentExecutor:
+    """
+    Build a web agent that searches the web for information about a person.
+    Args:
+        tools: The tools to use.
+        llm: The LLM model to use.
+        memory: The memory to use.
+    Returns:
+        The web agent.
+    """
+
+    system_prompt = PromptTemplate.from_file(Path(__file__).parent / "prompts" / "web_agent.txt")
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt.template),
         ("human", "{input}\n\n{agent_scratchpad}")
     ])
     agent = create_react_agent(
-        llm=llm.get_default_llm(),
+        llm=llm,
         tools=tools,
         prompt=prompt)
     if memory is None:
@@ -39,6 +67,5 @@ def build_web_agent(tools: List[Tool], memory: Optional[BaseChatMemory] = None) 
         memory=memory,
         early_stopping_method="generate",
         verbose=True,
-        #callbacks=[PrettyPrinter()]
     )
     return agent_chain

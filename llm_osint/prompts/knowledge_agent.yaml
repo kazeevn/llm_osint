@@ -1,0 +1,26 @@
+gather: >-
+  Learn as much as possible about {name} like their job, hobbies,
+  common daily activities, friends, social media, interests, personality traits,
+  preferences, and aspirations.
+initial_web_agent: |-
+  {gather_prompt}
+            
+  Then list all the information you have gathered and where these details
+  were gathered from. Be VERY detailed and list as much information as possible.
+deep_dive_list: |-
+  Given these details about {name} and search and webpage reading abilities, create a list of {num_topics} areas to deep dive into to better "{gather_prompt}".
+
+  Format the areas as a numbered list. Respond only with the list.
+
+  Details:
+  {current_knowledge}
+deep_dive_web_agent: |-
+  {gather_prompt}
+
+  Here's what you already know:
+  {current_knowledge}
+
+  Then list all the information you have gathered and where these details
+  were gathered from. Be VERY detailed and list as much information as possible.
+
+  For now, specifically ONLY look into: {deep_dive_topic}

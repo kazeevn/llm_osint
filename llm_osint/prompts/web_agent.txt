@@ -28,7 +28,7 @@ Thought: I now know the final answer
 Final Answer: [your response here] the final answer to the original input question
 
 Example:
-Question: What were some documened accomplishemnts of John Doe?
+Question: What were some documented accomplishments of John Doe?
 Thought: To find the accomplishments of John Doe, I should read his personal website.
 Action: Read Link
 Action Input: https://www.example.com/johndoe

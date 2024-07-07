@@ -1,0 +1,30 @@
+map: |-
+  Given this text from {link} extract key unique personal characteristics and links about {name} as a list.
+
+  Only include values if they are derived from the original text and relate to {name}.
+
+  If a link begins with "/" prefix it with {link}. Do not include links to generic website pages like login, privacy, or legal.
+
+  {example_instructions}
+
+  ---
+  {{text}}
+reduce: |-
+  Given these chunks of details from {link} about {name}. Merge and deduplicate these into a single list.
+
+  If some details disagree, pick the most common one. For links, include at most 10 of the most related links.
+
+  {{texts}}
+example_instructions: |-
+  For example
+  - name:
+  - location:
+  - age:
+  - job title:
+  - projects:
+  - hobbies:
+  - people they know:
+  - common activities:
+  - interesting personal links:
+  - coworkers:
+  - friends:

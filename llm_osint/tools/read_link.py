@@ -1,76 +1,50 @@
 from typing import Optional, Callable
-
+from omegaconf import OmegaConf
+from pathlib import Path
 from langchain.agents import Tool
+from langchain.chat_models.base import BaseChatModel
 
 from llm_osint.link_scraping import scrape_naive, chunk_and_strip_html
 from llm_osint.llm_map_reduce import map_reduce_texts
-from llm_osint import llm
-
-
-PARSE_MAP_PROMPT = """
-Given this text from {link} extract key unique personal characteristics and links about {name} as a list.
-
-Only include values if they are derived from the original text and relate to {name}.
-
-If a link begins with "/" prefix it with {link}. Do not include links to generic website pages like login, privacy, or legal.
-
-{example_instructions}
-
----
-{{text}}
-"""
-
-PARSE_EXAMPLE_EXTRACTION = """
-For example
-- name:
-- location:
-- age:
-- job title:
-- projects:
-- hobbies:
-- people they know:
-- common activities:
-- interesting personal links:
-- coworkers:
-"""
-
-PARSE_REDUCE_PROMPT = """
-Given these chunks of details from {link} about {name}. Merge and deduplicate these into a single list.
-
-If some details disagree, pick the most common one. For links, include at most 10 of the most related links.
-
-{{texts}}
-"""
-
 
 class ReadLinkWrapper:
     def __init__(
         self,
-        map_prompt: Optional[str] = PARSE_MAP_PROMPT,
-        example_instructions: Optional[str] = PARSE_EXAMPLE_EXTRACTION,
-        reduce_prompt: Optional[str] = PARSE_REDUCE_PROMPT,
-        model: Optional[llm.LLMModel] = None,
         scrapper_func: Optional[Callable] = scrape_naive,
-        **format_kwargs
-    ):
-        self.model = model
-        self.map_prompt = map_prompt
-        self.example_instructions = example_instructions
-        self.reduce_prompt = reduce_prompt
+        map_llm: BaseChatModel = None,
+        reduce_llm: BaseChatModel = None,
+        reduce_chunks: int = 100,
+        **format_kwargs):
+        """
+        Args:
+            scrapper_func: The function to scrape the link.
+            map_llm: The LLM model to use for mapping.
+            reduce_llm: The LLM model to use for reducing.
+            reduce_chunks: The number of chunks to reduce at a time.
+            format_kwargs: The format kwargs.
+        """
+        self.prompts = OmegaConf.load(Path(__file__).parent / "read_link.yaml")
         self.format_kwargs = format_kwargs
         self.scrapper_func = scrapper_func
+        self.map_llm = map_llm
+        self.reduce_llm = reduce_llm
+        self.reduce_chunks = reduce_chunks
 
-    def run(self, query: str) -> str:
-        if query.endswith(".pdf"):
+    def run(self, url: str) -> str:
+        """
+        Read the contents of a link, and extract the information with map/reduce.
+        """
+        if url.endswith(".pdf"):
             return "Cannot read links that end in pdf"
-        chunks = chunk_and_strip_html(self.scrapper_func(query), 4000)
-        format_args = {**self.format_kwargs, "link": query, "example_instructions": self.example_instructions}
+        chunks = chunk_and_strip_html(self.scrapper_func(url), 4000)
+        format_args = {**self.format_kwargs, "link": url, "example_instructions": self.prompts.example_instructions}
         return map_reduce_texts(
             chunks,
-            map_prompt=self.map_prompt.format(**format_args),
-            reduce_prompt=self.reduce_prompt.format(**format_args),
-            reduce_chunks=100,
-            model=self.model,
+            map_prompt=self.prompts.map.format(**format_args),
+            reduce_prompt=self.prompts.reduce.format(**format_args),
+            reduce_chunks=self.reduce_chunks,
+            map_llm=self.map_llm,
+            reduce_llm=self.reduce_llm
         )
 
 
