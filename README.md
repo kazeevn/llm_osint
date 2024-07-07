@@ -7,7 +7,7 @@ _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI C
 
 ## Getting Started
 ### Install the packages
-Use either [poetry](https://python-poetry.org/) or `requirements.txt`
+Use either [poetry](https://python-poetry.org/) or `requirements.txt`. Alternatively, you can can run the code online at [![Research platform](research_platform_badge.svg)](https://research.constructor.tech/public/project/llm_osint) 
 ### Environment Setup
 
 ```
