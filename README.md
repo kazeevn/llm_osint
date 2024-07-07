@@ -3,7 +3,7 @@
 
 _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI Could Revolutionize Email—for Hackers"_.
 
-<img width="990" alt="ApplicationFrameHost_UWJhAyEJDw" src="https://user-images.githubusercontent.com/6625384/232262373-bbf80996-e38a-4d4e-8be9-3e05277417f0.png">
+https://github.com/kazeevn/llm_osint/assets/1529084/6e2ea9a4-66cb-47bd-a484-c43f1f8b4ec1
 
 ## Getting Started
 ### Install the packages
