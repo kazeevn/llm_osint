@@ -9,21 +9,19 @@ _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI C
 ### Install the packages
 Use either [poetry](https://python-poetry.org/) or `requirements.txt`. Alternatively, you can can run the code online at [![Research platform](research_platform_badge.svg)](https://research.constructor.tech/public/project/llm_osint) 
 ### Environment Setup
-
-```
+```bash
 OPENAI_API_KEY=
 SERPER_API_KEY=
 SCRAPINGBEE_API_KEY=
 SCRAPINGANT_API_KEY=
 ```
 Note: [Serper](https://serper.dev/), [ScrapingBee](https://www.scrapingbee.com/) and [ScrapingAnt](https://scrapingant.com/) provide free trial usage of the APIs that should be good enough to run this a few times. If you plan on developing the code further, you may want to add LangSmith:
-```
+```bash
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
 LANGCHAIN_API_KEY=
 LANGCHAIN_PROJECT="llm-osint"
 ```
-
 ### Privacy
 
 This tool is spooky good at gathering information from publicly available sources. However, it is crucial to recognize the responsibility that comes with using such a powerful tool. When utilizing it to research individuals other than yourself, always be cognizant of each person's right to privacy. Remember that personal information uncovered through open-source intelligence remains personal and should be treated with respect and protection. Use this tool ethically and responsibly, ensuring that you do not infringe upon anyone's privacy or engage in malicious activities.
