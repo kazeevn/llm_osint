@@ -63,7 +63,7 @@ def main():
     parser.add_argument("name", type=str)
     parser.add_argument("--ask", type=str)
     parser.add_argument("--log-level", type=str, default=logging.WARNING)
-    parser.add_argument("--scraper", type=str, default="scrape_naive")
+    parser.add_argument("--scraper", type=str, default="scrape_scrapingbee")
     parser.add_argument("--gui", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=args.log_level)
