@@ -700,6 +700,9 @@ pydantic-core==2.20.1 ; python_version >= "3.10" and python_version < "4.0" \
 pydantic==2.8.2 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:6f62c13d067b0755ad1c21a34bdd06c0c12625a22b0fc09c6b149816604f7c2a \
     --hash=sha256:73ee9fddd406dc318b885c7a2eab8a6472b68b8fb5ba8150949fc3db939f23c8
+python-dotenv==1.0.1 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca \
+    --hash=sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a
 pyyaml==6.0.1 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5 \
     --hash=sha256:062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc \

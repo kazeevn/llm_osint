@@ -7,6 +7,7 @@ import logging
 from omegaconf import OmegaConf
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+from dotenv import load_dotenv
 from llm_osint import knowledge_agent, web_agent, cache_utils
 
 
@@ -50,6 +51,7 @@ ASK_PROMPT = r"""Given these details about {name}.
 """
 
 def main():
+    load_dotenv()
     parser = argparse.ArgumentParser()
     parser.add_argument("name", type=str)
     parser.add_argument("--ask", type=str)
@@ -57,7 +59,7 @@ def main():
     args = parser.parse_args()
     logging.basicConfig(level=args.log_level)
     config = OmegaConf.load(Path(__file__).parent / "config.yaml")
-   
+
     content = fetch_internet_content(args.name, config)
     file_name = re.sub(r"[^\w]", "", args.name).lower() + ".txt"
     with open(Path("internet_content", file_name), "wt", encoding="utf-8") as f:
