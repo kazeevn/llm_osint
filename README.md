@@ -1,7 +1,7 @@
 # llm_osint
 ### LLM OSINT is a proof-of-concept method of using LLMs to gather information from the internet and then perform a task with this information.
 
-_As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI Could Revolutionize Email—for Hackers"_.
+Based on work by [Shrivu Shankar](https://github.com/sshh12). _As seen on [The Wall Street Journal](https://archive.ph/p8XyR) "Generative AI Could Revolutionize Email—for Hackers"_.
 
 https://github.com/kazeevn/llm_osint/assets/1529084/6e2ea9a4-66cb-47bd-a484-c43f1f8b4ec1
 
