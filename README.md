@@ -279,7 +279,7 @@ Happy coding (and chewing)! 😃
 </details>
 
 ### Batch lookup
-Put the list of names in a file, e. g. `example_names` and use `batch_lookup.py`. For example:
+Put the list of names in a file, e. g. `example_names.txt` and use `batch_lookup.py`. For example:
 ```bash
 python batch_lookup.py example_names.txt --ask "List 5 main associates" --n-jobs 4
 ```
