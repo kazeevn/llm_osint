@@ -26,6 +26,18 @@ LANGCHAIN_PROJECT="llm-osint"
 
 This tool is spooky good at gathering information from publicly available sources. However, it is crucial to recognize the responsibility that comes with using such a powerful tool. When utilizing it to research individuals other than yourself, always be cognizant of each person's right to privacy. Remember that personal information uncovered through open-source intelligence remains personal and should be treated with respect and protection. Use this tool ethically and responsibly, ensuring that you do not infringe upon anyone's privacy or engage in malicious activities.
 
+### Demo vs full mode
+By default the code is configured to do a fast surface search. To do a full deep dive, edit `config.yaml` and set
+```yaml
+  deep_dive_topics: 10
+  deep_dive_rounds: 2
+```
+You may also want to use [a later model](https://platform.openai.com/docs/models) instead of GPT-3.5. Be aware that this will increase the cost of the operation 10x. For example:
+```yaml
+llm:
+  model_name: gpt-4-turbo
+```
+
 ### Person Lookup
 
 The most obvious use for something like this is to have it "google" someone and then perform an action with this information. In these examples, the author used it to research himself and took the first result. **No other additional information was given to the script beyond the command below**. For common names, disambiguation can be done like `John Smith (the Texas Musician)`.
@@ -265,6 +277,12 @@ Happy coding (and chewing)! 😃
 > This is pretty weird. This could be a dystopian ad tech future.
 
 </details>
+
+### Batch lookup
+Put the list of names in a file, e. g. `example_names` and use `batch_lookup.py`. For example:
+```bash
+python batch_lookup.py example_names.txt --ask "List 5 main associates" --n-jobs 4
+```
 
 ## Prompt Architecture
 
